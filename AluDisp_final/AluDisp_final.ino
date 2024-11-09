@@ -17,21 +17,19 @@ void setup() {
 
   for (int i = 2; i <= 9; i++) {
     pinMode(i, OUTPUT);
-    digitalWrite(i, LOW);  // Asegurarse de que todos los pines de salida están apagados al inicio
+    digitalWrite(i, LOW); 
   }
 
   Serial.begin(9600);
 }
 
 void loop() {
-  EstadoA = digitalRead(A0);  // Lectura de A0
-  EstadoB = digitalRead(A1);  // Lectura de A1
-  
+  EstadoA = digitalRead(A0); 
+  EstadoB = digitalRead(A1);  
   EstadoW = digitalRead(10);
   EstadoX = digitalRead(11);
   EstadoY = digitalRead(12);
   EstadoZ = digitalRead(13);
-
   int resultado = 0;
   bool negativo = false;
   bool indeterminado = false;
@@ -45,7 +43,7 @@ void loop() {
     resultado = EstadoA - EstadoB;
     if (resultado < 0) {
       negativo = true;
-      resultado = -resultado;  // Invertir el resultado negativo
+      resultado = -resultado; 
     }
     Serial.println("Resta");
   } else if (EstadoW == 0 && EstadoX == 0 && EstadoY == 1 && EstadoZ == 1) {
@@ -81,26 +79,24 @@ void loop() {
     Serial.println("NOR");
   }
 
-  clearDisplay1();  // Asegurarse de que el display esté limpio antes de mostrar el nuevo resultado
-
+  clearDisplay1();
   if (!indeterminado) {
-    display7Segment1(resultado);
+    display1(resultado);
   } else {
-    displayIndeterminate();
+    displayIndeterminacion();
   }
-
-  displayNegative(negativo);
+  displayNegativo(negativo);
 }
 
-void display7Segment1(int number) {
-  int segments[] = {
+void display1(int numero) {
+  int segmentos[] = {
     0b0111111, // 0
-    0b0000110, // 1 - Enciende solo los segmentos B y C
+    0b0000110, // 1
     0b1011011  // 2
   };
   
-  if (number >= 0 && number <= 2) {  // Solo se maneja hasta el número 2
-    int segment = segments[number];
+  if (numero >= 0 && numero <= 2) { 
+    int segment = segmentos[numero];
     for (int i = 2; i <= 8; i++) {
       digitalWrite(i, segment & 1);
       segment >>= 1;
@@ -108,13 +104,11 @@ void display7Segment1(int number) {
   }
 }
 
-void displayNegative(bool isNegative) {
-  // Encender el segmento G (pin 9) si el resultado es negativo
-  digitalWrite(9, isNegative ? HIGH : LOW);  // HIGH enciende el segmento G
+void displayNegativo(bool isNegative) {
+  digitalWrite(9, isNegative ? HIGH : LOW); 
 }
 
-void displayIndeterminate() {
-  // Enciende los segmentos G, A y D para indicar indeterminación
+void displayIndeterminacion() {
   digitalWrite(9, HIGH);  // Segmento G
   digitalWrite(2, HIGH);  // Segmento A
   digitalWrite(5, HIGH);  // Segmento D
